@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 
 class Controller extends BaseController
@@ -54,7 +55,7 @@ class Controller extends BaseController
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Successfully connected to Elasticsearch server.',
-                    'version' => $info['version']['number']
+                    'version' => $info['version']['number'],
                 ]);
             } else {
                 return response()->json(['status' => 'error', 'message' => 'Failed to connect to Elasticsearch server.']);
@@ -67,28 +68,38 @@ class Controller extends BaseController
     public function elasticsearchSearch(Request $request)
     {
         $query = $request->input('query');
-        echo $query;
+        $fields = $request->input('fields');
 
         $client = ClientBuilder::create()
             ->setHosts([getenv('ELASTICSEARCH_HOSTS')])
             ->build();
 
         $params = [
-            'index' => 'les-gorgones_*/',
+            'index' => 'les-gorgones_*',
             'body' => [
                 'query' => [
-                    'multi_match' => [
-                        'type' => 'best_fields',
-                        'query' => $query,
-                    ]
+                    'match_all' => new \stdClass()
                 ]
             ]
         ];
 
+        if ($query) {
+            $params['body']['query'] = [
+                'multi_match' => [
+                    'type' => 'best_fields',
+                    'query' => $query,
+                ]
+            ];
+        }
+
+        if ($fields) {
+            $params['body']['query']['multi_match']['fields'] = $fields;
+        }
+
         try {
             $response = $client->search($params);
-            return response()->json($response);
 
+            return response($response)->header('Content-Type', 'application/json');
         } catch (ClientResponseException $e) {
             return response()->json([
                 'status' => 'error',

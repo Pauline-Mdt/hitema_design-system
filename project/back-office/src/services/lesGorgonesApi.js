@@ -16,6 +16,13 @@ export const http = axios.create({
 });
 
 /*
+ELASTICSEARCH ROUTES
+ */
+export const elasticsearchSearch = (searchQuery) => {
+    return http.get(`/elasticsearch/search?query=${searchQuery}`)
+}
+
+/*
 AUTH ROUTES
  */
 export const login = (userEmail, userPassword) => {
