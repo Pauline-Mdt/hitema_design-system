@@ -1,0 +1,161 @@
+version: "3"
+
+services:
+  elasticsearch:
+    container_name: les-gorgones-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#      nofile:
+#        soft: 65536
+#        hard: 65536
+#    cap_add:
+#      - IPC_LOCK
+    volumes:
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - les-gorgones-elastic-network
+    restart: always
+
+  kibana:
+    container_name: les-gorgones-kibana
+    image: docker.elastic.co/kibana/kibana:8.11.3
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - les-gorgones-elastic-network
+    restart: always
+
+  db:
+    container_name: les-gorgones-db
+    image: mysql:8.1
+    environment:
+      - MYSQL_ROOT_PASSWORD=secretpwd@r00t
+      - MYSQL_DATABASE=les_gorgones
+      - MYSQL_USER=admin_lg_2023
+      - MYSQL_PASSWORD=secretpwd@user
+    volumes:
+      - ./db/les_gorgones.sql:/docker-entrypoint-initdb.d/les_gorgones.sql
+    ports:
+      - "32789:3306"
+    networks:
+      - les-gorgones-db-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  laravel_api:
+    container_name: les-gorgones-api
+    build:
+      context: .
+      dockerfile: DockerfileLaravel
+    environment:
+      - ELASTICSEARCH_HOSTS=elasticsearch:9200
+    volumes:
+      - ./api:/var/www/html
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+      - elasticsearch
+    networks:
+      - les-gorgones-db-network
+      - les-gorgones-api-network
+      - les-gorgones-nginx-network
+      - les-gorgones-elastic-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  react_app:
+    container_name: les-gorgones-back-office
+    build:
+      context: .
+      dockerfile: DockerfileReact
+    volumes:
+      - ./back-office:/back-office
+    ports:
+      - "3000:3000"
+    depends_on:
+      - laravel_api
+    networks:
+      - les-gorgones-api-network
+      - les-gorgones-nginx-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    container_name: les-gorgones-nginx
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/ssl/certs
+    ports:
+      - "8080:80"
+      - "443:443"
+    depends_on:
+      - react_app
+    networks:
+      - les-gorgones-nginx-network
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  portainer_agent:
+    container_name: les-gorgones-portainer
+    image: portainer/portainer-ce
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    ports:
+      - "9000:9000"
+    restart: always
+
+  weave_scope:
+    container_name: les-gorgones-weave-scope
+    image: weaveworks/scope:latest
+    labels:
+      - "works.weave.role=system"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    ports:
+      - "4040:4040"
+    command:
+      - "--probe.docker=true"
+      - "--weave=false"
+    restart: always
+    privileged: true
+    network_mode: "host"
+    pid: "host"
+
+networks:
+  les-gorgones-db-network:
+    driver: bridge
+  les-gorgones-api-network:
+    driver: bridge
+  les-gorgones-nginx-network:
+    driver: bridge
+  les-gorgones-elastic-network:
+    driver: bridge
+
+volumes:
+  portainer-data:

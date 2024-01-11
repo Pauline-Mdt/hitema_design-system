@@ -1,0 +1,6 @@
+# Ignore dependencies
+api/vendor
+back-office/node_modules
+
+# Ignore build
+back-office/build

@@ -1,0 +1,16 @@
+{"index":{"_id":1}}
+{"tattooist_id":1,"is_admin":1,"first_name":"Pauline","last_name":"Maudet","email":"paulinemaudet@yahoo.fr","email_verified_at":"2022-05-07 16:38:58","password":"$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC\/.og\/at2.uheWG\/igi","remember_token":"sL733x83FG","created_at":"2022-05-07 16:39:18","updated_at":"2022-06-24 10:59:27"}
+{"index":{"_id":4}}
+{"tattooist_id":4,"is_admin":0,"first_name":"Margot","last_name":"Dubois","email":"margot57@example.org","email_verified_at":"2022-05-07 16:38:59","password":"$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC\/.og\/at2.uheWG\/igi","remember_token":"6JmqUr0quh","created_at":"2022-05-07 16:39:18","updated_at":"2022-07-05 17:54:58"}
+{"index":{"_id":5}}
+{"tattooist_id":9,"is_admin":0,"first_name":"Gilles","last_name":"Carre","email":"zpons@example.org","email_verified_at":"2022-05-07 16:38:59","password":"$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC\/.og\/at2.uheWG\/igi","remember_token":"zN8qfgGYjE","created_at":"2022-05-07 16:39:18","updated_at":"2022-05-07 16:39:18"}
+{"index":{"_id":8}}
+{"tattooist_id":ul,"is_admin":0,"first_name":"Louis","last_name":"Raymond","email":"ccordier@example.com","email_verified_at":"2022-05-07 16:39:03","password":"$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC\/.og\/at2.uheWG\/igi","remember_token":"pABifUlikY","created_at":"2022-05-07 16:39:18","updated_at":"2022-05-07 16:39:18"}
+{"index":{"_id":10}}
+{"tattooist_id":6,"is_admin":0,"first_name":"Paul","last_name":"Gomes","email":"julien30@example.com","email_verified_at":"2022-05-07 16:39:18","password":"$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC\/.og\/at2.uheWG\/igi","remember_token":"QVtqQwOVE9","created_at":"2022-05-07 16:39:18","updated_at":"2022-05-07 16:39:18"}
+{"index":{"_id":18}}
+{"tattooist_id":ul,"is_admin":0,"first_name":"yth","last_name":"jnfh","email":"testtgf@gfserrdg","email_verified_at":null,"password":"$2y$10$HlaHaXvPxzKTJ8n5cs4VjexqhO1aElpuvrmYF.pIJ.VMCzypkviFG","remember_token":null,"created_at":"2022-05-30 14:08:48","updated_at":"2022-05-30 14:08:48"}
+{"index":{"_id":19}}
+{"tattooist_id":ul,"is_admin":0,"first_name":"Fabien","last_name":"Lecouve","email":"fabien.lecouve@gmail.com","email_verified_at":null,"password":"$2y$10$gxjHcLBM4bf8j17Dd3hIfel6LrpBxX\/tj6e0AS8NMYeb7DK.Fw\/Pm","remember_token":null,"created_at":"2022-06-08 19:37:39","updated_at":"2022-06-08 19:37:39"}
+{"index":{"_id":20}}
+{"tattooist_id":7,"is_admin":0,"first_name":"Victor","last_name":"Emilio","email":"victor.emilio@gmail.com","email_verified_at":null,"password":"$2y$10$FREPH9ZqsFk1iicOkec.HeaGISlV8pLUEOHouqJPCeCP4ufE7keya","remember_token":null,"created_at":"2022-06-08 19:40:59","updated_at":"2022-06-08 19:40:59"}

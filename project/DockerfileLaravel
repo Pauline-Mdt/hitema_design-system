@@ -1,0 +1,50 @@
+FROM php:8.2-apache
+
+RUN apt-get update
+RUN apt-get install -y zip
+RUN apt-get install -y default-mysql-client
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Set environment variables for Apache
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_PID_FILE /var/run/apache2/apache2.pid
+ENV APACHE_RUN_DIR /var/run/apache2
+
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+# Set config for Apache
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application files
+COPY ./api/ .
+COPY ./api/.env.example .env
+
+# Set environment variables for Laravel
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV APP_URL=https://0.0.0.0
+ENV DB_CONNECTION=mysql
+ENV DB_HOST=db
+ENV DB_PORT=3306
+ENV DB_DATABASE=les_gorgones
+ENV DB_USERNAME=admin_lg_2023
+ENV DB_PASSWORD=secretpwd@user
+
+# Install dependencies and give rights to apache user
+RUN composer install --optimize-autoloader --no-dev
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
+RUN a2enmod rewrite
+
+EXPOSE 80
+
+CMD ["apache2", "-D", "FOREGROUND"]

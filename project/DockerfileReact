@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /back-office
+
+# Copy application files
+COPY ./back-office/ .
+
+# Install dependencies
+RUN npm install
+
+EXPOSE 3000
+
+# Start application
+CMD ["npm", "start"]
